@@ -1,0 +1,27 @@
+# ============================================
+# PARTE 2 - Workflow 3: Build Maven
+# Disparo: push na branch main
+# ============================================
+
+name: Maven CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build com Maven
+        run: ./mvnw clean package -DskipTests

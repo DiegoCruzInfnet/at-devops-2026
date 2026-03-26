@@ -1,0 +1,16 @@
+# ============================================
+# PARTE 2 - Workflow 1: Hello CI/CD
+# Disparo: qualquer push
+# ============================================
+
+name: Hello CI/CD
+
+on:
+  push:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exibir mensagem
+        run: echo "Hello CI/CD"

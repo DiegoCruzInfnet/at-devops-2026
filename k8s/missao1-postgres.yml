@@ -1,0 +1,56 @@
+# MISSÃO 1 - Banco de Dados PostgreSQL
+# Namespace: ufology
+
+# 1. Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ufology
+
+---
+
+# 2. Deployment do PostgreSQL
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: ufology
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: leogloriainfnet/ufodb:1.0-win
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "devops2025!"
+            - name: POSTGRES_DB
+              value: "ufology"
+
+---
+
+# 3. Service do PostgreSQL
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: ufology
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP

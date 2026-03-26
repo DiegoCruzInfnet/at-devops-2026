@@ -1,0 +1,89 @@
+# MISSÃO 4 - Aplicação ufoTracker
+# Namespace: ufology
+
+# 1. ConfigMap - dados não sensíveis
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: ufology
+data:
+  DB_NAME: "ufology"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+
+---
+
+# 2. Secret - dados sensíveis
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+  namespace: ufology
+type: Opaque
+stringData:
+  DB_PASSWORD: "devops2025!"
+  DB_USERNAME: "postgres"
+
+---
+
+# 3. Deployment da aplicação
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ufo-tracker
+  namespace: ufology
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ufo-tracker
+  template:
+    metadata:
+      labels:
+        app: ufo-tracker
+    spec:
+      containers:
+        - name: ufo-tracker
+          image: diegoblzz/ufo-tracker:1.0  
+          ports:
+            - containerPort: 8080
+          env:
+            # Variáveis do banco (vindas do ConfigMap e Secret)
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
+            # Sobrescreve o host do banco para apontar ao Service do cluster
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/ufology"
+            # Sobrescreve o host do Redis para apontar ao Service do cluster
+            - name: SPRING_DATA_REDIS_HOST
+              value: "redis"
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+
+---
+
+# 4. Service da aplicação
+apiVersion: v1
+kind: Service
+metadata:
+  name: ufo-tracker
+  namespace: ufology
+spec:
+  selector:
+    app: ufo-tracker
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
