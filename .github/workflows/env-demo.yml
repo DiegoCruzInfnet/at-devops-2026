@@ -1,0 +1,19 @@
+# ============================================
+# PARTE 3 - Workflow 1: Variável de Ambiente
+# Disparo: qualquer push
+# ============================================
+
+name: Env Demo
+
+on:
+  push:
+
+env:
+  DEPLOY_ENV: staging
+
+jobs:
+  env-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exibir variável de ambiente
+        run: echo "Ambiente de deploy: $DEPLOY_ENV"
