@@ -1,3 +1,5 @@
+![Monitor e Debug](https://github.com/DiegoCruzInfnet/at-devops-2026/actions/workflows/monitor-debug.yml/badge.svg)
+
 # AT DevOps 2026
 
 ## O papel do Git na Entrega Contínua
