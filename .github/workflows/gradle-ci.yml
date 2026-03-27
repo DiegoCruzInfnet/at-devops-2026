@@ -31,3 +31,9 @@ jobs:
 
       - name: Build com Maven
         run: ./mvnw clean package -DskipTests
+      
+      - name: Upload do artefato JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufo-tracker-jar
+          path: devops2026-ufoTracker/target/*.jar
